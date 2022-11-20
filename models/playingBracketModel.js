@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const userSchema = mongoose.Schema(
+const playingBracketSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -16,15 +16,10 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add a name'],
     },
-    email: {
-      type: String,
-      required: [true, 'Please add an email'],
-      unique: true,
-    },
-    locked: {
-      type: Boolean,
-      required: [true, 'Please add an email']
-    },
+    // locked: {
+    //   type: Boolean,
+    //   required: [true, 'Please add lock status']
+    // },
     bracket: {
       type: String,
       required: [true, 'You need a bracket'],
@@ -35,4 +30,4 @@ const userSchema = mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model('PlayingBracket', userSchema)
+module.exports = mongoose.model('PlayingBracket', playingBracketSchema)

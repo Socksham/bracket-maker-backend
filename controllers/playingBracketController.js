@@ -2,16 +2,17 @@ const asyncHandler = require('express-async-handler')
 
 const PlayingBracket = require('../models/playingBracketModel')
 const User = require('../models/userModel')
-const ManagingBracket = require('../models/manageBracketModel')
+const ManagingBracket = require('../models/managingBracketModel')
 
 const getPlayingBrackets = asyncHandler(async (req, res) => {
-    const brackets = await PlayingBracket.find({ user: req.user.id })
-    console.log("GETTING BRACKETS")
+    const brackets = await PlayingBracket.find({ user: { $eq: req.user.id } })
+    console.log("GETTING PLAYING BRACKETS")
     console.log(brackets)
     res.status(200).json(brackets)
 })
 
 const getPlayingBracket = asyncHandler(async (req, res) => {
+    console.log("HANDLER: " + req.params)
     const bracket = await PlayingBracket.findById(req.params.id)
 
     if (!bracket) {
@@ -37,28 +38,29 @@ const createPlayingBracket = asyncHandler(async (req, res) => {
     console.log(req.body)
     if (!req.body.joinCode) {
         res.status(400)
-        throw new Error('Please add a bracket')
+        throw new Error('Please add a join code')
     }
-    console.log("CREATING")
-    const managingBracket = await ManagingBracket.findOne({joinCode: req.body.joinCode})
+    console.log("GET MANAGING")
+    const managingBracket = await ManagingBracket.findOne({ joinCode: req.body.joinCode })
     console.log("managing: " + managingBracket)
 
-    if(managingBracket === null){
+    if (managingBracket === null) {
         res.status(400)
         throw new Error('Invalid join code')
     }
-
+    console.log("CREATING")
     const bracket = await PlayingBracket.create({
         bracket: managingBracket.bracket,
         managingBracket: managingBracket.id,
         user: req.user.id,
+        name: managingBracket.name,
     })
 
     res.status(200).json(bracket)
 })
 
 const updatePlayingBracket = asyncHandler(async (req, res) => {
-    const bracket = await Bracket.findById(req.params.id)
+    const bracket = await PlayingBracket.findById(req.params.id)
 
     if (!bracket) {
         res.status(400)
@@ -77,15 +79,22 @@ const updatePlayingBracket = asyncHandler(async (req, res) => {
         throw new Error('User not authorized')
     }
 
-    const updatedBracket = await Bracket.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
+    // const updatedBracket = await PlayingBracket.updateOne(req.params.id, req.body, {
+    //     new: true,
+    // })
+
+    bracket.update({ $set: { bracket: req.body.bracket } }, newvalues, function (err, res) {
+        if (err) throw err;
+        console.log("1 document updated");
     })
+
+    const updatedBracket = await PlayingBracket.updateOne({ $set: { bracket: req.body.bracket } })
 
     res.status(200).json(updatedBracket)
 })
 
 const deletePlayingBracket = asyncHandler(async (req, res) => {
-    const bracket = await Bracket.findById(req.params.id)
+    const bracket = await PlayingBracket.findById(req.params.id)
 
     if (!bracket) {
         res.status(400)

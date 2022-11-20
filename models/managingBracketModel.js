@@ -1,15 +1,15 @@
 const mongoose = require('mongoose')
 
-const userSchema = mongoose.Schema(
+const managingBracketSchema = mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'User',
     },
-    locked: {
-      type: Boolean,
-      required: [true, 'Please add an email']
+    lockDate: {
+      type: Date,
+      required: [true, 'You need to indicate lock date']
     },
     bracket: {
       type: String,
@@ -30,4 +30,4 @@ const userSchema = mongoose.Schema(
   }
 )
 
-module.exports = mongoose.model('ManageBracket', userSchema)
+module.exports = mongoose.model('ManagingBracket', managingBracketSchema)

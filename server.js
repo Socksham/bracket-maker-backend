@@ -16,7 +16,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/goals', require('./routes/goalRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/playing-brackets', require('./routes/userBracketRoutes'))
+app.use('/api/playing-brackets', require('./routes/playingBracketRoutes'))
+app.use('/api/managing-brackets', require('./routes/managingBracketRoutes'))
 
 // Serve frontend
 if (process.env.NODE_ENV === 'production') {
